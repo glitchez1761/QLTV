@@ -1,37 +1,69 @@
-<h2 class="mb-3">Quản lý biên bản vi phạm</h2>
-<a href="<?= BASE_URL ?>/vi-pham/create" class="btn btn-primary mb-3">Tạo biên bản</a>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <h2 class="mb-4"><?= isset($item) ? 'Sửa phiếu mượn' : 'Lập phiếu mượn' ?></h2>
 
-<table class="table table-bordered table-striped align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Mã biên bản</th>
-            <th>Phiếu mượn</th>
-            <th>Nhân viên</th>
-            <th>Ngày lập</th>
-            <th>Loại vi phạm</th>
-            <th>Tiền phạt</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($items as $item): ?>
-            <tr>
-                <td><?= htmlspecialchars((string)$item['MaBienBan']) ?></td>
-                <td><?= htmlspecialchars((string)($item['MaPhieuMuon'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['TenNhanVien'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['NgayLap'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['LoaiViPham'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['TienPhat'] ?? 0)) ?></td>
-                <td><?= htmlspecialchars((string)($item['TrangThai'] ?? 'Chua xu ly')) ?></td>
-                <td>
-                    <a href="<?= BASE_URL ?>/vi-pham/edit?id=<?= (int)$item['MaBienBan'] ?>" class="btn btn-sm btn-warning">Sửa</a>
-                    <form method="POST" action="<?= BASE_URL ?>/vi-pham/delete" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
-                        <input type="hidden" name="id" value="<?= (int)$item['MaBienBan'] ?>">
-                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/phieu-muon/update' : '/phieu-muon/store' ?>">
+            <?php if (isset($item)): ?>
+                <input type="hidden" name="MaPhieuMuon" value="<?= (int)$item['MaPhieuMuon'] ?>">
+            <?php endif; ?>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Độc giả</label>
+                    <select name="MaDocGia" class="form-select" required>
+                        <option value="">-- Chọn độc giả --</option>
+                        <?php foreach ($docGias as $docGia): ?>
+                            <option value="<?= (int)$docGia['MaDocGia'] ?>" <?= (isset($item) && (int)$item['MaDocGia'] === (int)$docGia['MaDocGia']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$docGia['HoTen']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nhân viên</label>
+                    <select name="MaNhanVien" class="form-select" required>
+                        <option value="">-- Chọn nhân viên --</option>
+                        <?php foreach ($nhanViens as $nhanVien): ?>
+                            <option value="<?= (int)$nhanVien['MaNhanVien'] ?>" <?= (isset($item) && (int)$item['MaNhanVien'] === (int)$nhanVien['MaNhanVien']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$nhanVien['HoTen']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sách</label>
+                    <select name="MaSach" class="form-select" required>
+                        <option value="">-- Chọn sách --</option>
+                        <?php foreach ($sachs as $sach): ?>
+                            <option value="<?= (int)$sach['MaSach'] ?>" <?= (isset($item) && (int)$item['MaSach'] === (int)$sach['MaSach']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$sach['TenSach']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Số lượng mượn</label>
+                    <input type="number" name="SoLuongMuon" class="form-control" min="1" value="<?= htmlspecialchars((string)($item['SoLuongMuon'] ?? 1)) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày mượn</label>
+                    <input type="date" name="NgayMuon" class="form-control" value="<?= htmlspecialchars((string)($item['NgayMuon'] ?? date('Y-m-d'))) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Hạn trả</label>
+                    <input type="date" name="HanTra" class="form-control" value="<?= htmlspecialchars((string)($item['HanTra'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày trả</label>
+                    <input type="date" name="NgayTra" class="form-control" value="<?= htmlspecialchars((string)($item['NgayTra'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="TrangThai" class="form-select">
+                        <option value="Dang muon" <?= (isset($item) && ($item['TrangThai'] ?? '') === 'Dang muon') ? 'selected' : '' ?>>Đang mượn</option>
+                        <option value="Da tra" <?= (isset($item) && ($item['TrangThai'] ?? '') === 'Da tra') ? 'selected' : '' ?>>Đã trả</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a href="<?= BASE_URL ?>/phieu-muon" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>

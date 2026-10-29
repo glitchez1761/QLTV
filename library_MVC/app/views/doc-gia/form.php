@@ -1,39 +1,58 @@
-<h2 class="mb-3">Quản lý độc giả</h2>
-<a href="<?= BASE_URL ?>/doc-gia/create" class="btn btn-primary mb-3">Thêm độc giả</a>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <h2 class="mb-4"><?= isset($item) ? 'Sửa nhân viên' : 'Thêm nhân viên' ?></h2>
 
-<table class="table table-bordered table-striped align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Mã độc giả</th>
-            <th>Họ tên</th>
-            <th>Ngày sinh</th>
-            <th>Giới tính</th>
-            <th>SĐT</th>
-            <th>Ngày cấp thẻ</th>
-            <th>Ngày hết hạn</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($items as $item): ?>
-            <tr>
-                <td><?= htmlspecialchars((string)$item['MaDocGia']) ?></td>
-                <td><?= htmlspecialchars((string)$item['HoTen']) ?></td>
-                <td><?= htmlspecialchars((string)($item['NgaySinh'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['GioiTinh'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['SoDienThoai'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['NgayCapThe'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['NgayHetHan'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['TrangThaiThe'] ?? 'Con han')) ?></td>
-                <td>
-                    <a href="<?= BASE_URL ?>/doc-gia/edit?id=<?= (int)$item['MaDocGia'] ?>" class="btn btn-sm btn-warning">Sửa</a>
-                    <form method="POST" action="<?= BASE_URL ?>/doc-gia/delete" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
-                        <input type="hidden" name="id" value="<?= (int)$item['MaDocGia'] ?>">
-                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/nhan-vien/update' : '/nhan-vien/store' ?>">
+            <?php if (isset($item)): ?>
+                <input type="hidden" name="MaNhanVien" value="<?= (int)$item['MaNhanVien'] ?>">
+            <?php endif; ?>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Họ tên</label>
+                    <input type="text" name="HoTen" class="form-control" value="<?= htmlspecialchars((string)($item['HoTen'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày sinh</label>
+                    <input type="date" name="NgaySinh" class="form-control" value="<?= htmlspecialchars((string)($item['NgaySinh'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Giới tính</label>
+                    <input type="text" name="GioiTinh" class="form-control" value="<?= htmlspecialchars((string)($item['GioiTinh'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" name="SoDienThoai" class="form-control" value="<?= htmlspecialchars((string)($item['SoDienThoai'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text" name="DiaChi" class="form-control" value="<?= htmlspecialchars((string)($item['DiaChi'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Chức vụ</label>
+                    <input type="text" name="ChucVu" class="form-control" value="<?= htmlspecialchars((string)($item['ChucVu'] ?? '')) ?>" required>
+                </div>
+                <?php if (!isset($item)): ?>
+                    <div class="col-md-6">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input type="text" name="TenDangNhap" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mật khẩu</label>
+                        <input type="password" name="MatKhau" class="form-control" required>
+                    </div>
+                <?php else: ?>
+                    <div class="col-md-12">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input type="text" name="TenDangNhap" class="form-control" value="<?= htmlspecialchars((string)($item['TenDangNhap'] ?? '')) ?>" required>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a href="<?= BASE_URL ?>/nhan-vien" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>

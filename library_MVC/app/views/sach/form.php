@@ -1,37 +1,102 @@
-<h2 class="mb-3">Quản lý sách</h2>
-<a href="<?= BASE_URL ?>/sach/create" class="btn btn-primary mb-3">Thêm sách mới</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Dashboard quản lý thư viện</h2>
+        <p class="text-muted mb-0">Tổng quan các module CRUD chính</p>
+    </div>
+    <a href="<?= BASE_URL ?>/sach/create" class="btn btn-primary">+ Thêm mới</a>
+</div>
 
-<table class="table table-bordered table-striped align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Mã sách</th>
-            <th>Tên sách</th>
-            <th>Tác giả</th>
-            <th>Thể loại</th>
-            <th>NXB</th>
-            <th>Năm</th>
-            <th>Số lượng</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($items as $item): ?>
-            <tr>
-                <td><?= htmlspecialchars((string)$item['MaSach']) ?></td>
-                <td><?= htmlspecialchars((string)$item['TenSach']) ?></td>
-                <td><?= htmlspecialchars((string)$item['TacGia']) ?></td>
-                <td><?= htmlspecialchars((string)$item['TheLoai']) ?></td>
-                <td><?= htmlspecialchars((string)($item['NhaXuatBan'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['NamXuatBan'] ?? '')) ?></td>
-                <td><?= htmlspecialchars((string)($item['SoLuong'] ?? 0)) ?></td>
-                <td>
-                    <a href="<?= BASE_URL ?>/sach/edit?id=<?= (int)$item['MaSach'] ?>" class="btn btn-sm btn-warning">Sửa</a>
-                    <form method="POST" action="<?= BASE_URL ?>/sach/delete" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
-                        <input type="hidden" name="id" value="<?= (int)$item['MaSach'] ?>">
-                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+<div class="row g-4">
+    <div class="col-md-6 col-xl-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-primary fw-semibold">Sách</span>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill">Module</span>
+                </div>
+                <h3 class="mb-0"><?= number_format($counts['sach'] ?? 0, 0, ',', '.') ?></h3>
+                <div class="mt-3">
+                    <a href="<?= BASE_URL ?>/sach" class="btn btn-sm btn-outline-primary me-2">Xem danh sách</a>
+                    <a href="<?= BASE_URL ?>/sach/create" class="btn btn-sm btn-primary">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-success fw-semibold">Nhân viên</span>
+                    <span class="badge bg-success-subtle text-success rounded-pill">Module</span>
+                </div>
+                <h3 class="mb-0"><?= number_format($counts['nhan_vien'] ?? 0, 0, ',', '.') ?></h3>
+                <div class="mt-3">
+                    <a href="<?= BASE_URL ?>/nhan-vien" class="btn btn-sm btn-outline-success me-2">Xem danh sách</a>
+                    <a href="<?= BASE_URL ?>/nhan-vien/create" class="btn btn-sm btn-success">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-warning fw-semibold">Độc giả</span>
+                    <span class="badge bg-warning-subtle text-warning rounded-pill">Module</span>
+                </div>
+                <h3 class="mb-0"><?= number_format($counts['doc_gia'] ?? 0, 0, ',', '.') ?></h3>
+                <div class="mt-3">
+                    <a href="<?= BASE_URL ?>/doc-gia" class="btn btn-sm btn-outline-warning me-2">Xem danh sách</a>
+                    <a href="<?= BASE_URL ?>/doc-gia/create" class="btn btn-sm btn-warning">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-info fw-semibold">Phiếu mượn</span>
+                    <span class="badge bg-info-subtle text-info rounded-pill">Module</span>
+                </div>
+                <h3 class="mb-0"><?= number_format($counts['phieu_muon'] ?? 0, 0, ',', '.') ?></h3>
+                <div class="mt-3">
+                    <a href="<?= BASE_URL ?>/phieu-muon" class="btn btn-sm btn-outline-info me-2">Xem danh sách</a>
+                    <a href="<?= BASE_URL ?>/phieu-muon/create" class="btn btn-sm btn-info">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-danger fw-semibold">Vi phạm</span>
+                    <span class="badge bg-danger-subtle text-danger rounded-pill">Module</span>
+                </div>
+                <h3 class="mb-0"><?= number_format($counts['vi_pham'] ?? 0, 0, ',', '.') ?></h3>
+                <div class="mt-3">
+                    <a href="<?= BASE_URL ?>/vi-pham" class="btn btn-sm btn-outline-danger me-2">Xem danh sách</a>
+                    <a href="<?= BASE_URL ?>/vi-pham/create" class="btn btn-sm btn-danger">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-body">
+        <h5 class="mb-3">Tác vụ nhanh</h5>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="<?= BASE_URL ?>/sach/create" class="btn btn-primary">Thêm sách</a>
+            <a href="<?= BASE_URL ?>/nhan-vien/create" class="btn btn-success">Thêm nhân viên</a>
+            <a href="<?= BASE_URL ?>/doc-gia/create" class="btn btn-warning">Thêm độc giả</a>
+            <a href="<?= BASE_URL ?>/phieu-muon/create" class="btn btn-info">Lập phiếu mượn</a>
+            <a href="<?= BASE_URL ?>/vi-pham/create" class="btn btn-danger">Tạo biên bản vi phạm</a>
+        </div>
+    </div>
+</div>

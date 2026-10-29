@@ -1,120 +1,60 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/app/config/config.php';
-require_once __DIR__ . '/app/libs/Database.php';
-require_once __DIR__ . '/app/libs/AuthMiddleware.php';
-require_once __DIR__ . '/app/libs/Controller.php';
-require_once __DIR__ . '/app/libs/Router.php';
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <h2 class="mb-4"><?= isset($item) ? 'Sửa biên bản vi phạm' : 'Tạo biên bản vi phạm' ?></h2>
 
-// Require new CRUD controllers
-require_once __DIR__ . '/app/controllers/SachController.php';
-require_once __DIR__ . '/app/controllers/NhanVienController.php';
-require_once __DIR__ . '/app/controllers/DocGiaController.php';
-require_once __DIR__ . '/app/controllers/PhieuMuonSachController.php';
-require_once __DIR__ . '/app/controllers/BienBanViPhamController.php';
+        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/vi-pham/update' : '/vi-pham/store' ?>">
+            <?php if (isset($item)): ?>
+                <input type="hidden" name="MaBienBan" value="<?= (int)$item['MaBienBan'] ?>">
+            <?php endif; ?>
 
-$router = new Router();
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Phiếu mượn</label>
+                    <select name="MaPhieuMuon" class="form-select" required>
+                        <option value="">-- Chọn phiếu mượn --</option>
+                        <?php foreach ($phieuMuons as $phieuMuon): ?>
+                            <option value="<?= (int)$phieuMuon['MaPhieuMuon'] ?>" <?= (isset($item) && (int)$item['MaPhieuMuon'] === (int)$phieuMuon['MaPhieuMuon']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$phieuMuon['MaPhieuMuon']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nhân viên lập</label>
+                    <select name="MaNhanVien" class="form-select" required>
+                        <option value="">-- Chọn nhân viên --</option>
+                        <?php foreach ($nhanViens as $nhanVien): ?>
+                            <option value="<?= (int)$nhanVien['MaNhanVien'] ?>" <?= (isset($item) && (int)$item['MaNhanVien'] === (int)$nhanVien['MaNhanVien']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$nhanVien['HoTen']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày lập</label>
+                    <input type="date" name="NgayLap" class="form-control" value="<?= htmlspecialchars((string)($item['NgayLap'] ?? date('Y-m-d'))) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Loại vi phạm</label>
+                    <input type="text" name="LoaiViPham" class="form-control" value="<?= htmlspecialchars((string)($item['LoaiViPham'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Mô tả</label>
+                    <textarea name="MoTa" class="form-control" rows="3"><?= htmlspecialchars((string)($item['MoTa'] ?? '')) ?></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tiền phạt</label>
+                    <input type="number" step="0.01" name="TienPhat" class="form-control" value="<?= htmlspecialchars((string)($item['TienPhat'] ?? 0)) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="TrangThai" class="form-select">
+                        <option value="Chua xu ly" <?= (isset($item) && ($item['TrangThai'] ?? '') === 'Chua xu ly') ? 'selected' : '' ?>>Chưa xử lý</option>
+                        <option value="Da xu ly" <?= (isset($item) && ($item['TrangThai'] ?? '') === 'Da xu ly') ? 'selected' : '' ?>>Đã xử lý</option>
+                    </select>
+                </div>
+            </div>
 
-$router->get('/', 'HomeController@index');
-
-// Tài khoản
-$router->get('/auth/login', 'AuthController@login');
-$router->post('/auth/handleLogin', 'AuthController@handleLogin');
-$router->get('/auth/register', 'AuthController@register');
-$router->post('/auth/handleRegister', 'AuthController@handleRegister');
-$router->get('/auth/firstChangePassword', 'AuthController@firstChangePassword');
-$router->post('/auth/handleFirstChangePassword', 'AuthController@handleFirstChangePassword');
-$router->get('/auth/logout', 'AuthController@logout');
-$router->get('/auth/profile', 'AuthController@profile', ['DOC_GIA', 'NHAN_VIEN', 'QUAN_LY']);
-
-// CRUD - Sách
-$router->get('/sach', 'SachController@index');
-$router->get('/sach/create', 'SachController@create');
-$router->post('/sach/store', 'SachController@store');
-$router->get('/sach/edit', 'SachController@edit');
-$router->post('/sach/update', 'SachController@update');
-$router->post('/sach/delete', 'SachController@delete');
-
-// CRUD - Nhân viên
-$router->get('/nhan-vien', 'NhanVienController@index');
-$router->get('/nhan-vien/create', 'NhanVienController@create');
-$router->post('/nhan-vien/store', 'NhanVienController@store');
-$router->get('/nhan-vien/edit', 'NhanVienController@edit');
-$router->post('/nhan-vien/update', 'NhanVienController@update');
-$router->post('/nhan-vien/delete', 'NhanVienController@delete');
-
-// CRUD - Độc giả
-$router->get('/doc-gia', 'DocGiaController@index');
-$router->get('/doc-gia/create', 'DocGiaController@create');
-$router->post('/doc-gia/store', 'DocGiaController@store');
-$router->get('/doc-gia/edit', 'DocGiaController@edit');
-$router->post('/doc-gia/update', 'DocGiaController@update');
-$router->post('/doc-gia/delete', 'DocGiaController@delete');
-
-// CRUD - Phiếu mượn sách
-$router->get('/phieu-muon', 'PhieuMuonSachController@index');
-$router->get('/phieu-muon/create', 'PhieuMuonSachController@create');
-$router->post('/phieu-muon/store', 'PhieuMuonSachController@store');
-$router->get('/phieu-muon/edit', 'PhieuMuonSachController@edit');
-$router->post('/phieu-muon/update', 'PhieuMuonSachController@update');
-$router->post('/phieu-muon/delete', 'PhieuMuonSachController@delete');
-
-// CRUD - Biên bản vi phạm
-$router->get('/vi-pham', 'BienBanViPhamController@index');
-$router->get('/vi-pham/create', 'BienBanViPhamController@create');
-$router->post('/vi-pham/store', 'BienBanViPhamController@store');
-$router->get('/vi-pham/edit', 'BienBanViPhamController@edit');
-$router->post('/vi-pham/update', 'BienBanViPhamController@update');
-$router->post('/vi-pham/delete', 'BienBanViPhamController@delete');
-
-// Mượn sách
-$router->get('/loan/create', 'LoanController@create', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/loan/store', 'LoanController@store', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/loan/renew', 'LoanController@renew', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/loans', 'LoanController@index', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/loan/detail', 'LoanController@detail', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/packages', 'LoanController@packages');
-$router->post('/packages/register', 'LoanController@registerPackage', ['DOC_GIA']);
-
-// Trả sách & Vi phạm
-$router->get('/return', 'ReturnController@index', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/return/check', 'ReturnController@checkCondition', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/return/process', 'ReturnController@processReturn', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/violations', 'ReturnController@violations', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/violations/detail', 'ReturnController@violationDetail', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/violations/pay', 'ReturnController@payViolation', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/reminders', 'ReturnController@reminders', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/reminders/scan', 'ReturnController@autoScanReminders', ['NHAN_VIEN', 'QUAN_LY']);
-
-// Thẻ & Tra cứu
-$router->get('/books/search', 'CardController@searchBooks');
-$router->get('/cards', 'CardController@cardList', ['NHAN_VIEN', 'QUAN_LY']);
-$router->get('/cards/renew', 'CardController@renewForm', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/cards/renew', 'CardController@renewCard', ['NHAN_VIEN', 'QUAN_LY']);
-$router->post('/cards/cancel', 'CardController@cancelCard', ['NHAN_VIEN', 'QUAN_LY']);
-
-// Kho, Nhân sự & Báo cáo
-$router->get('/admin/books', 'AdminController@booksIndex', ['QUAN_LY']);
-$router->get('/admin/books/create', 'AdminController@bookCreate', ['QUAN_LY']);
-$router->get('/admin/books/edit', 'AdminController@bookEdit', ['QUAN_LY']);
-$router->post('/admin/books/save', 'AdminController@bookSave', ['QUAN_LY']);
-$router->get('/admin/books/inventory', 'AdminController@bookInventory', ['QUAN_LY']);
-$router->post('/admin/books/copies/add', 'AdminController@addBookCopy', ['QUAN_LY']);
-$router->get('/admin/staff', 'AdminController@staffIndex', ['QUAN_LY']);
-$router->get('/admin/staff/create', 'AdminController@staffCreate', ['QUAN_LY']);
-$router->post('/admin/staff/store', 'AdminController@staffStore', ['QUAN_LY']);
-$router->get('/admin/reports', 'AdminController@reportIndex', ['QUAN_LY']);
-$router->post('/admin/reports/generate', 'AdminController@reportGenerate', ['QUAN_LY']);
-$router->get('/admin/reports/view', 'AdminController@reportView', ['QUAN_LY']);
-
-$url = $_GET['url'] ?? '/';
-try {
-    $router->dispatch($url);
-} catch (Throwable $e) {
-    error_log($e->__toString());
-    http_response_code(500);
-    echo '<!doctype html><html lang="vi"><meta charset="utf-8"><title>Lỗi hệ thống</title>';
-    echo '<main><h1>Không thể xử lý yêu cầu</h1><p>Đã xảy ra lỗi hệ thống. Vui lòng thử lại hoặc liên hệ quản trị viên.</p></main></html>';
-}
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a href="<?= BASE_URL ?>/vi-pham" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
