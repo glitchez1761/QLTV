@@ -8,6 +8,13 @@ require_once __DIR__ . '/app/libs/AuthMiddleware.php';
 require_once __DIR__ . '/app/libs/Controller.php';
 require_once __DIR__ . '/app/libs/Router.php';
 
+// Require new CRUD controllers
+require_once __DIR__ . '/app/controllers/SachController.php';
+require_once __DIR__ . '/app/controllers/NhanVienController.php';
+require_once __DIR__ . '/app/controllers/DocGiaController.php';
+require_once __DIR__ . '/app/controllers/PhieuMuonSachController.php';
+require_once __DIR__ . '/app/controllers/BienBanViPhamController.php';
+
 $router = new Router();
 
 $router->get('/', 'HomeController@index');
@@ -21,6 +28,46 @@ $router->get('/auth/firstChangePassword', 'AuthController@firstChangePassword');
 $router->post('/auth/handleFirstChangePassword', 'AuthController@handleFirstChangePassword');
 $router->get('/auth/logout', 'AuthController@logout');
 $router->get('/auth/profile', 'AuthController@profile', ['DOC_GIA', 'NHAN_VIEN', 'QUAN_LY']);
+
+// CRUD - Sách
+$router->get('/sach', 'SachController@index');
+$router->get('/sach/create', 'SachController@create');
+$router->post('/sach/store', 'SachController@store');
+$router->get('/sach/edit', 'SachController@edit');
+$router->post('/sach/update', 'SachController@update');
+$router->post('/sach/delete', 'SachController@delete');
+
+// CRUD - Nhân viên
+$router->get('/nhan-vien', 'NhanVienController@index');
+$router->get('/nhan-vien/create', 'NhanVienController@create');
+$router->post('/nhan-vien/store', 'NhanVienController@store');
+$router->get('/nhan-vien/edit', 'NhanVienController@edit');
+$router->post('/nhan-vien/update', 'NhanVienController@update');
+$router->post('/nhan-vien/delete', 'NhanVienController@delete');
+
+// CRUD - Độc giả
+$router->get('/doc-gia', 'DocGiaController@index');
+$router->get('/doc-gia/create', 'DocGiaController@create');
+$router->post('/doc-gia/store', 'DocGiaController@store');
+$router->get('/doc-gia/edit', 'DocGiaController@edit');
+$router->post('/doc-gia/update', 'DocGiaController@update');
+$router->post('/doc-gia/delete', 'DocGiaController@delete');
+
+// CRUD - Phiếu mượn sách
+$router->get('/phieu-muon', 'PhieuMuonSachController@index');
+$router->get('/phieu-muon/create', 'PhieuMuonSachController@create');
+$router->post('/phieu-muon/store', 'PhieuMuonSachController@store');
+$router->get('/phieu-muon/edit', 'PhieuMuonSachController@edit');
+$router->post('/phieu-muon/update', 'PhieuMuonSachController@update');
+$router->post('/phieu-muon/delete', 'PhieuMuonSachController@delete');
+
+// CRUD - Biên bản vi phạm
+$router->get('/vi-pham', 'BienBanViPhamController@index');
+$router->get('/vi-pham/create', 'BienBanViPhamController@create');
+$router->post('/vi-pham/store', 'BienBanViPhamController@store');
+$router->get('/vi-pham/edit', 'BienBanViPhamController@edit');
+$router->post('/vi-pham/update', 'BienBanViPhamController@update');
+$router->post('/vi-pham/delete', 'BienBanViPhamController@delete');
 
 // Mượn sách
 $router->get('/loan/create', 'LoanController@create', ['NHAN_VIEN', 'QUAN_LY']);
