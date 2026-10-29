@@ -1,91 +1,43 @@
-<?php
-class BienBanViPhamController extends Controller {
-    private BienBanViPhamModel $model;
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-3">Quản lý sách</h2>
+    </div>
+    <a href="<?= BASE_URL ?>/sach/create" class="btn btn-primary">+ Thêm mới</a>
+</div>
 
-    public function __construct() {
-        $this->model = new BienBanViPhamModel();
-    }
-
-    public function index(): void {
-        $this->view('vi-pham/index', ['items' => $this->model->getAll()]);
-    }
-
-    public function create(): void {
-        $this->view('vi-pham/form', [
-            'phieuMuons' => (new PhieuMuonSachModel())->getAll(),
-            'nhanViens' => (new NhanVienModel())->getAll(),
-        ]);
-    }
-
-    public function store(): void {
-        $data = [
-            'MaPhieuMuon' => trim($_POST['MaPhieuMuon'] ?? ''),
-            'MaNhanVien' => trim($_POST['MaNhanVien'] ?? ''),
-            'NgayLap' => trim($_POST['NgayLap'] ?? ''),
-            'LoaiViPham' => trim($_POST['LoaiViPham'] ?? ''),
-            'MoTa' => trim($_POST['MoTa'] ?? ''),
-            'TienPhat' => trim($_POST['TienPhat'] ?? '0'),
-            'TrangThai' => trim($_POST['TrangThai'] ?? 'Chua xu ly'),
-        ];
-
-        if ($data['MaPhieuMuon'] === '' || $data['MaNhanVien'] === '' || $data['NgayLap'] === '' || $data['LoaiViPham'] === '') {
-            $_SESSION['error'] = 'Vui lòng nhập đầy đủ thông tin biên bản vi phạm.';
-            $this->redirect('/vi-pham/create');
-        }
-
-        $this->model->create($data);
-        $_SESSION['success'] = 'Lập biên bản vi phạm thành công.';
-        $this->redirect('/vi-pham');
-    }
-
-    public function edit(): void {
-        $id = (int)($_GET['id'] ?? 0);
-        $item = $this->model->getById($id);
-        if (!$item) {
-            $_SESSION['error'] = 'Không tìm thấy biên bản vi phạm.';
-            $this->redirect('/vi-pham');
-        }
-
-        $this->view('vi-pham/form', [
-            'item' => $item,
-            'phieuMuons' => (new PhieuMuonSachModel())->getAll(),
-            'nhanViens' => (new NhanVienModel())->getAll(),
-        ]);
-    }
-
-    public function update(): void {
-        $id = (int)($_POST['MaBienBan'] ?? 0);
-        if ($id <= 0) {
-            $_SESSION['error'] = 'Mã biên bản không hợp lệ.';
-            $this->redirect('/vi-pham');
-        }
-
-        $data = [
-            'MaPhieuMuon' => trim($_POST['MaPhieuMuon'] ?? ''),
-            'MaNhanVien' => trim($_POST['MaNhanVien'] ?? ''),
-            'NgayLap' => trim($_POST['NgayLap'] ?? ''),
-            'LoaiViPham' => trim($_POST['LoaiViPham'] ?? ''),
-            'MoTa' => trim($_POST['MoTa'] ?? ''),
-            'TienPhat' => trim($_POST['TienPhat'] ?? '0'),
-            'TrangThai' => trim($_POST['TrangThai'] ?? 'Chua xu ly'),
-        ];
-
-        if ($data['MaPhieuMuon'] === '' || $data['MaNhanVien'] === '' || $data['NgayLap'] === '' || $data['LoaiViPham'] === '') {
-            $_SESSION['error'] = 'Vui lòng nhập đầy đủ thông tin biên bản vi phạm.';
-            $this->redirect('/vi-pham/edit?id=' . $id);
-        }
-
-        $this->model->update($id, $data);
-        $_SESSION['success'] = 'Cập nhật biên bản vi phạm thành công.';
-        $this->redirect('/vi-pham');
-    }
-
-    public function delete(): void {
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id > 0) {
-            $this->model->delete($id);
-            $_SESSION['success'] = 'Xóa biên bản vi phạm thành công.';
-        }
-        $this->redirect('/vi-pham');
-    }
-}
+<table class="table table-bordered table-striped align-middle shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã sách</th>
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Thể loại</th>
+            <th>NXB</th>
+            <th>Năm</th>
+            <th>Số lượng</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($items as $item): ?>
+            <tr>
+                <td><?= htmlspecialchars((string)$item['MaSach']) ?></td>
+                <td><?= htmlspecialchars((string)$item['TenSach']) ?></td>
+                <td><?= htmlspecialchars((string)$item['TacGia']) ?></td>
+                <td><?= htmlspecialchars((string)$item['TheLoai']) ?></td>
+                <td><?= htmlspecialchars((string)($item['NhaXuatBan'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)($item['NamXuatBan'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)($item['SoLuong'] ?? 0)) ?></td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="<?= BASE_URL ?>/sach/edit?id=<?= (int)$item['MaSach'] ?>" class="btn btn-sm btn-warning">Sửa</a>
+                        <form method="POST" action="<?= BASE_URL ?>/sach/delete" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                            <input type="hidden" name="id" value="<?= (int)$item['MaSach'] ?>">
+                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

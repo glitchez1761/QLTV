@@ -1,102 +1,43 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="mb-1">Dashboard quản lý thư viện</h2>
-        <p class="text-muted mb-0">Tổng quan các module CRUD chính</p>
-    </div>
-    <a href="<?= BASE_URL ?>/sach/create" class="btn btn-primary">+ Thêm mới</a>
-</div>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <h2 class="mb-4"><?= isset($item) ? 'Sửa sách' : 'Thêm sách mới' ?></h2>
 
-<div class="row g-4">
-    <div class="col-md-6 col-xl-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-primary fw-semibold">Sách</span>
-                    <span class="badge bg-primary-subtle text-primary rounded-pill">Module</span>
+        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/sach/update' : '/sach/store' ?>">
+            <?php if (isset($item)): ?>
+                <input type="hidden" name="MaSach" value="<?= (int)$item['MaSach'] ?>">
+            <?php endif; ?>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên sách</label>
+                    <input type="text" name="TenSach" class="form-control" value="<?= htmlspecialchars((string)($item['TenSach'] ?? '')) ?>" required>
                 </div>
-                <h3 class="mb-0"><?= number_format($counts['sach'] ?? 0, 0, ',', '.') ?></h3>
-                <div class="mt-3">
-                    <a href="<?= BASE_URL ?>/sach" class="btn btn-sm btn-outline-primary me-2">Xem danh sách</a>
-                    <a href="<?= BASE_URL ?>/sach/create" class="btn btn-sm btn-primary">Thêm mới</a>
+                <div class="col-md-6">
+                    <label class="form-label">Tác giả</label>
+                    <input type="text" name="TacGia" class="form-control" value="<?= htmlspecialchars((string)($item['TacGia'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Thể loại</label>
+                    <input type="text" name="TheLoai" class="form-control" value="<?= htmlspecialchars((string)($item['TheLoai'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nhà xuất bản</label>
+                    <input type="text" name="NhaXuatBan" class="form-control" value="<?= htmlspecialchars((string)($item['NhaXuatBan'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Năm xuất bản</label>
+                    <input type="number" name="NamXuatBan" class="form-control" value="<?= htmlspecialchars((string)($item['NamXuatBan'] ?? '')) ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Số lượng</label>
+                    <input type="number" name="SoLuong" class="form-control" min="0" value="<?= htmlspecialchars((string)($item['SoLuong'] ?? 0)) ?>" required>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="col-md-6 col-xl-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-success fw-semibold">Nhân viên</span>
-                    <span class="badge bg-success-subtle text-success rounded-pill">Module</span>
-                </div>
-                <h3 class="mb-0"><?= number_format($counts['nhan_vien'] ?? 0, 0, ',', '.') ?></h3>
-                <div class="mt-3">
-                    <a href="<?= BASE_URL ?>/nhan-vien" class="btn btn-sm btn-outline-success me-2">Xem danh sách</a>
-                    <a href="<?= BASE_URL ?>/nhan-vien/create" class="btn btn-sm btn-success">Thêm mới</a>
-                </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a href="<?= BASE_URL ?>/sach" class="btn btn-secondary">Quay lại</a>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-xl-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-warning fw-semibold">Độc giả</span>
-                    <span class="badge bg-warning-subtle text-warning rounded-pill">Module</span>
-                </div>
-                <h3 class="mb-0"><?= number_format($counts['doc_gia'] ?? 0, 0, ',', '.') ?></h3>
-                <div class="mt-3">
-                    <a href="<?= BASE_URL ?>/doc-gia" class="btn btn-sm btn-outline-warning me-2">Xem danh sách</a>
-                    <a href="<?= BASE_URL ?>/doc-gia/create" class="btn btn-sm btn-warning">Thêm mới</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-xl-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-info fw-semibold">Phiếu mượn</span>
-                    <span class="badge bg-info-subtle text-info rounded-pill">Module</span>
-                </div>
-                <h3 class="mb-0"><?= number_format($counts['phieu_muon'] ?? 0, 0, ',', '.') ?></h3>
-                <div class="mt-3">
-                    <a href="<?= BASE_URL ?>/phieu-muon" class="btn btn-sm btn-outline-info me-2">Xem danh sách</a>
-                    <a href="<?= BASE_URL ?>/phieu-muon/create" class="btn btn-sm btn-info">Thêm mới</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-xl-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-danger fw-semibold">Vi phạm</span>
-                    <span class="badge bg-danger-subtle text-danger rounded-pill">Module</span>
-                </div>
-                <h3 class="mb-0"><?= number_format($counts['vi_pham'] ?? 0, 0, ',', '.') ?></h3>
-                <div class="mt-3">
-                    <a href="<?= BASE_URL ?>/vi-pham" class="btn btn-sm btn-outline-danger me-2">Xem danh sách</a>
-                    <a href="<?= BASE_URL ?>/vi-pham/create" class="btn btn-sm btn-danger">Thêm mới</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="card border-0 shadow-sm mt-4">
-    <div class="card-body">
-        <h5 class="mb-3">Tác vụ nhanh</h5>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="<?= BASE_URL ?>/sach/create" class="btn btn-primary">Thêm sách</a>
-            <a href="<?= BASE_URL ?>/nhan-vien/create" class="btn btn-success">Thêm nhân viên</a>
-            <a href="<?= BASE_URL ?>/doc-gia/create" class="btn btn-warning">Thêm độc giả</a>
-            <a href="<?= BASE_URL ?>/phieu-muon/create" class="btn btn-info">Lập phiếu mượn</a>
-            <a href="<?= BASE_URL ?>/vi-pham/create" class="btn btn-danger">Tạo biên bản vi phạm</a>
-        </div>
+        </form>
     </div>
 </div>

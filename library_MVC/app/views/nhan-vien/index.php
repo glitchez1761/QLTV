@@ -1,39 +1,41 @@
-<h2 class="mb-3"><?= isset($item) ? 'Sửa sách' : 'Thêm sách mới' ?></h2>
-
-<form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/sach/update' : '/sach/store' ?>">
-    <?php if (isset($item)): ?>
-        <input type="hidden" name="MaSach" value="<?= (int)$item['MaSach'] ?>">
-    <?php endif; ?>
-
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label class="form-label">Tên sách</label>
-            <input type="text" name="TenSach" class="form-control" value="<?= htmlspecialchars((string)($item['TenSach'] ?? '')) ?>" required>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Tác giả</label>
-            <input type="text" name="TacGia" class="form-control" value="<?= htmlspecialchars((string)($item['TacGia'] ?? '')) ?>" required>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Thể loại</label>
-            <input type="text" name="TheLoai" class="form-control" value="<?= htmlspecialchars((string)($item['TheLoai'] ?? '')) ?>" required>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Nhà xuất bản</label>
-            <input type="text" name="NhaXuatBan" class="form-control" value="<?= htmlspecialchars((string)($item['NhaXuatBan'] ?? '')) ?>">
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Năm xuất bản</label>
-            <input type="number" name="NamXuatBan" class="form-control" value="<?= htmlspecialchars((string)($item['NamXuatBan'] ?? '')) ?>">
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Số lượng</label>
-            <input type="number" name="SoLuong" class="form-control" min="0" value="<?= htmlspecialchars((string)($item['SoLuong'] ?? 0)) ?>" required>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-3">Quản lý nhân viên</h2>
     </div>
+    <a href="<?= BASE_URL ?>/nhan-vien/create" class="btn btn-primary">+ Thêm mới</a>
+</div>
 
-    <div class="mt-3">
-        <button type="submit" class="btn btn-primary">Lưu</button>
-        <a href="<?= BASE_URL ?>/sach" class="btn btn-secondary">Quay lại</a>
-    </div>
-</form>
+<table class="table table-bordered table-striped align-middle shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã NV</th>
+            <th>Họ tên</th>
+            <th>Ngày sinh</th>
+            <th>Giới tính</th>
+            <th>SĐT</th>
+            <th>Chức vụ</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($items as $item): ?>
+            <tr>
+                <td><?= htmlspecialchars((string)$item['MaNhanVien']) ?></td>
+                <td><?= htmlspecialchars((string)$item['HoTen']) ?></td>
+                <td><?= htmlspecialchars((string)($item['NgaySinh'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)($item['GioiTinh'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)($item['SoDienThoai'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)$item['ChucVu']) ?></td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="<?= BASE_URL ?>/nhan-vien/edit?id=<?= (int)$item['MaNhanVien'] ?>" class="btn btn-sm btn-warning">Sửa</a>
+                        <form method="POST" action="<?= BASE_URL ?>/nhan-vien/delete" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                            <input type="hidden" name="id" value="<?= (int)$item['MaNhanVien'] ?>">
+                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

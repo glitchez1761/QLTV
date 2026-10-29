@@ -1,57 +1,68 @@
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
-        <h2 class="mb-4"><?= isset($item) ? 'Sửa độc giả' : 'Thêm độc giả' ?></h2>
+        <h2 class="mb-4"><?= isset($item) ? 'Sửa phiếu mượn' : 'Lập phiếu mượn' ?></h2>
 
-        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/doc-gia/update' : '/doc-gia/store' ?>">
+        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/phieu-muon/update' : '/phieu-muon/store' ?>">
             <?php if (isset($item)): ?>
-                <input type="hidden" name="MaDocGia" value="<?= (int)$item['MaDocGia'] ?>">
+                <input type="hidden" name="MaPhieuMuon" value="<?= (int)$item['MaPhieuMuon'] ?>">
             <?php endif; ?>
 
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Họ tên</label>
-                    <input type="text" name="HoTen" class="form-control" value="<?= htmlspecialchars((string)($item['HoTen'] ?? '')) ?>" required>
+                    <label class="form-label">Độc giả</label>
+                    <select name="MaDocGia" class="form-select" required>
+                        <option value="">-- Chọn độc giả --</option>
+                        <?php foreach ($docGias as $docGia): ?>
+                            <option value="<?= (int)$docGia['MaDocGia'] ?>" <?= (isset($item) && (int)$item['MaDocGia'] === (int)$docGia['MaDocGia']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$docGia['HoTen']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Ngày sinh</label>
-                    <input type="date" name="NgaySinh" class="form-control" value="<?= htmlspecialchars((string)($item['NgaySinh'] ?? '')) ?>">
+                    <label class="form-label">Nhân viên</label>
+                    <select name="MaNhanVien" class="form-select" required>
+                        <option value="">-- Chọn nhân viên --</option>
+                        <?php foreach ($nhanViens as $nhanVien): ?>
+                            <option value="<?= (int)$nhanVien['MaNhanVien'] ?>" <?= (isset($item) && (int)$item['MaNhanVien'] === (int)$nhanVien['MaNhanVien']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$nhanVien['HoTen']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Giới tính</label>
-                    <input type="text" name="GioiTinh" class="form-control" value="<?= htmlspecialchars((string)($item['GioiTinh'] ?? '')) ?>">
+                    <label class="form-label">Sách</label>
+                    <select name="MaSach" class="form-select" required>
+                        <option value="">-- Chọn sách --</option>
+                        <?php foreach ($sachs as $sach): ?>
+                            <option value="<?= (int)$sach['MaSach'] ?>" <?= (isset($item) && (int)$item['MaSach'] === (int)$sach['MaSach']) ? 'selected' : '' ?>><?= htmlspecialchars((string)$sach['TenSach']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Số điện thoại</label>
-                    <input type="text" name="SoDienThoai" class="form-control" value="<?= htmlspecialchars((string)($item['SoDienThoai'] ?? '')) ?>">
+                    <label class="form-label">Số lượng mượn</label>
+                    <input type="number" name="SoLuongMuon" class="form-control" min="1" value="<?= htmlspecialchars((string)($item['SoLuongMuon'] ?? 1)) ?>" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Địa chỉ</label>
-                    <input type="text" name="DiaChi" class="form-control" value="<?= htmlspecialchars((string)($item['DiaChi'] ?? '')) ?>">
+                    <label class="form-label">Ngày mượn</label>
+                    <input type="date" name="NgayMuon" class="form-control" value="<?= htmlspecialchars((string)($item['NgayMuon'] ?? date('Y-m-d'))) ?>" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="Email" class="form-control" value="<?= htmlspecialchars((string)($item['Email'] ?? '')) ?>">
+                    <label class="form-label">Hạn trả</label>
+                    <input type="date" name="HanTra" class="form-control" value="<?= htmlspecialchars((string)($item['HanTra'] ?? '')) ?>" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Ngày cấp thẻ</label>
-                    <input type="date" name="NgayCapThe" class="form-control" value="<?= htmlspecialchars((string)($item['NgayCapThe'] ?? '')) ?>" required>
+                    <label class="form-label">Ngày trả</label>
+                    <input type="date" name="NgayTra" class="form-control" value="<?= htmlspecialchars((string)($item['NgayTra'] ?? '')) ?>">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Ngày hết hạn</label>
-                    <input type="date" name="NgayHetHan" class="form-control" value="<?= htmlspecialchars((string)($item['NgayHetHan'] ?? '')) ?>" required>
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label">Trạng thái thẻ</label>
-                    <select name="TrangThaiThe" class="form-select">
-                        <option value="Con han" <?= (isset($item) && ($item['TrangThaiThe'] ?? '') === 'Con han') ? 'selected' : '' ?>>Con hạn</option>
-                        <option value="Het han" <?= (isset($item) && ($item['TrangThaiThe'] ?? '') === 'Het han') ? 'selected' : '' ?>>Hết hạn</option>
+                    <label class="form-label">Trạng thái</label>
+                    <select name="TrangThai" class="form-select">
+                        <option value="Dang muon" <?= (isset($item) && ($item['TrangThai'] ?? '') === 'Dang muon') ? 'selected' : '' ?>>Đang mượn</option>
+                        <option value="Da tra" <?= (isset($item) && ($item['TrangThai'] ?? '') === 'Da tra') ? 'selected' : '' ?>>Đã trả</option>
                     </select>
                 </div>
             </div>
 
             <div class="mt-4 d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Lưu</button>
-                <a href="<?= BASE_URL ?>/doc-gia" class="btn btn-secondary">Quay lại</a>
+                <a href="<?= BASE_URL ?>/phieu-muon" class="btn btn-secondary">Quay lại</a>
             </div>
         </form>
     </div>

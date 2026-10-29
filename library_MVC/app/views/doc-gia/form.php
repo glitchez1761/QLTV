@@ -1,10 +1,10 @@
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
-        <h2 class="mb-4"><?= isset($item) ? 'Sửa nhân viên' : 'Thêm nhân viên' ?></h2>
+        <h2 class="mb-4"><?= isset($item) ? 'Sửa độc giả' : 'Thêm độc giả' ?></h2>
 
-        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/nhan-vien/update' : '/nhan-vien/store' ?>">
+        <form method="POST" action="<?= BASE_URL ?><?= isset($item) ? '/doc-gia/update' : '/doc-gia/store' ?>">
             <?php if (isset($item)): ?>
-                <input type="hidden" name="MaNhanVien" value="<?= (int)$item['MaNhanVien'] ?>">
+                <input type="hidden" name="MaDocGia" value="<?= (int)$item['MaDocGia'] ?>">
             <?php endif; ?>
 
             <div class="row g-3">
@@ -29,29 +29,29 @@
                     <input type="text" name="DiaChi" class="form-control" value="<?= htmlspecialchars((string)($item['DiaChi'] ?? '')) ?>">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Chức vụ</label>
-                    <input type="text" name="ChucVu" class="form-control" value="<?= htmlspecialchars((string)($item['ChucVu'] ?? '')) ?>" required>
+                    <label class="form-label">Email</label>
+                    <input type="email" name="Email" class="form-control" value="<?= htmlspecialchars((string)($item['Email'] ?? '')) ?>">
                 </div>
-                <?php if (!isset($item)): ?>
-                    <div class="col-md-6">
-                        <label class="form-label">Tên đăng nhập</label>
-                        <input type="text" name="TenDangNhap" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Mật khẩu</label>
-                        <input type="password" name="MatKhau" class="form-control" required>
-                    </div>
-                <?php else: ?>
-                    <div class="col-md-12">
-                        <label class="form-label">Tên đăng nhập</label>
-                        <input type="text" name="TenDangNhap" class="form-control" value="<?= htmlspecialchars((string)($item['TenDangNhap'] ?? '')) ?>" required>
-                    </div>
-                <?php endif; ?>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày cấp thẻ</label>
+                    <input type="date" name="NgayCapThe" class="form-control" value="<?= htmlspecialchars((string)($item['NgayCapThe'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày hết hạn</label>
+                    <input type="date" name="NgayHetHan" class="form-control" value="<?= htmlspecialchars((string)($item['NgayHetHan'] ?? '')) ?>" required>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Trạng thái thẻ</label>
+                    <select name="TrangThaiThe" class="form-select">
+                        <option value="Con han" <?= (isset($item) && ($item['TrangThaiThe'] ?? '') === 'Con han') ? 'selected' : '' ?>>Con hạn</option>
+                        <option value="Het han" <?= (isset($item) && ($item['TrangThaiThe'] ?? '') === 'Het han') ? 'selected' : '' ?>>Hết hạn</option>
+                    </select>
+                </div>
             </div>
 
             <div class="mt-4 d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Lưu</button>
-                <a href="<?= BASE_URL ?>/nhan-vien" class="btn btn-secondary">Quay lại</a>
+                <a href="<?= BASE_URL ?>/doc-gia" class="btn btn-secondary">Quay lại</a>
             </div>
         </form>
     </div>
