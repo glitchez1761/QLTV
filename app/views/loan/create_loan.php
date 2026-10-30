@@ -1,56 +1,62 @@
-<?php $pageTitle = 'Phiếu mượn'; require __DIR__ . '/../layouts/header.php'; ?>
-<div class="page-header">
-    <div>
-        <h2>Phiếu mượn đang mở</h2>
-        <small class="text-secondary">Tra cứu các tài liệu chưa được trả.</small>
+<?php
+$pageTitle = isset($reader) ? 'Sửa độc giả' : 'Thêm độc giả';
+$breadcrumbs = [
+    ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+    ['label' => 'Độc giả', 'url' => BASE_URL . '/public/index.php?controller=docgia&action=index'],
+    ['label' => isset($reader) ? 'Sửa độc giả' : 'Thêm độc giả', 'url' => null],
+];
+require __DIR__ . '/../layouts/header.php';
+?>
+<div class="form-panel">
+    <div class="page-header mb-4">
+        <h2><?= isset($reader) ? '✏️ Sửa độc giả' : '👥 Thêm độc giả' ?></h2>
     </div>
-    <a href="<?= BASE_URL ?>/public/index.php?controller=loan&action=create" class="btn btn-primary">+ Lập phiếu mượn</a>
-</div>
-
-<form class="row g-2 mb-3" method="get" action="<?= BASE_URL ?>/public/index.php?controller=loan&action=index">
-    <div class="col-sm-9">
-        <input id="loan-keyword" name="keyword" value="<?= htmlspecialchars((string)($_GET['keyword'] ?? '')) ?>" class="form-control" placeholder="Tìm theo độc giả, mã thẻ hoặc sách">
-    </div>
-    <div class="col-sm-3 d-grid">
-        <button class="btn btn-outline-primary">Tìm phiếu mượn</button>
-    </div>
-</form>
-
-<div class="table-responsive">
-    <table class="table table-hover align-middle shadow-sm bg-white">
-        <thead class="table-dark">
-            <tr>
-                <th>Phiếu mượn</th>
-                <th>Độc giả / thẻ</th>
-                <th>Tài liệu</th>
-                <th>Hạn trả</th>
-                <th>Trạng thái</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach (($loans ?? []) as $loan): ?>
-                <tr>
-                    <td><?= htmlspecialchars((string)($loan['ma_phieu_muon'] ?? '')) ?></td>
-                    <td><?= htmlspecialchars((string)($loan['ho_ten'] ?? '')) ?><br><small><?= htmlspecialchars((string)($loan['ma_the'] ?? '')) ?></small></td>
-                    <td><?= htmlspecialchars((string)($loan['ten_sach'] ?? '')) ?><br><small><?= htmlspecialchars((string)($loan['ma_tai_lieu'] ?? '')) ?></small></td>
-                    <td><?= htmlspecialchars((string)($loan['han_tra'] ?? '')) ?></td>
-                    <td>
-                        <span class="badge text-bg-<?= ($loan['han_tra'] ?? '') < date('Y-m-d') ? 'danger' : 'success' ?>">
-                            <?= (($loan['han_tra'] ?? '') < date('Y-m-d')) ? 'Quá hạn' : 'Đang mượn' ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if (((int)($loan['so_lan_gia_han'] ?? 0)) < 1 && (($loan['han_tra'] ?? '') >= date('Y-m-d')): ?>
-                            <a href="<?= BASE_URL ?>/public/index.php?controller=loan&action=renew&id=<?= (int)($loan['loan_detail_id'] ?? 0) ?>" class="btn btn-sm btn-outline-primary" onclick="return confirm('Gia hạn tài liệu này?');">Gia hạn</a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            <?php if (empty($loans)): ?>
-                <tr><td colspan="6" class="text-center text-secondary py-4">Không có phiếu mượn phù hợp.</td></tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+    <form method="POST" action="<?= BASE_URL ?>/public/index.php?controller=docgia&action=<?= isset($reader) ? 'update&id=' . urlencode($reader['MaDocGia']) : 'store' ?>">
+        <div class="field-grid">
+            <div>
+                <label class="form-label">Họ tên</label>
+                <input type="text" name="HoTen" class="form-control" value="<?= htmlspecialchars((string)($reader['HoTen'] ?? '')) ?>" required>
+            </div>
+            <div>
+                <label class="form-label">Ngày sinh</label>
+                <input type="date" name="NgaySinh" class="form-control" value="<?= htmlspecialchars((string)($reader['NgaySinh'] ?? '')) ?>">
+            </div>
+            <div>
+                <label class="form-label">Giới tính</label>
+                <input type="text" name="GioiTinh" class="form-control" value="<?= htmlspecialchars((string)($reader['GioiTinh'] ?? '')) ?>">
+            </div>
+            <div>
+                <label class="form-label">Số điện thoại</label>
+                <input type="text" name="SoDienThoai" class="form-control" value="<?= htmlspecialchars((string)($reader['SoDienThoai'] ?? '')) ?>">
+            </div>
+            <div>
+                <label class="form-label">Địa chỉ</label>
+                <input type="text" name="DiaChi" class="form-control" value="<?= htmlspecialchars((string)($reader['DiaChi'] ?? '')) ?>">
+            </div>
+            <div>
+                <label class="form-label">Email</label>
+                <input type="email" name="Email" class="form-control" value="<?= htmlspecialchars((string)($reader['Email'] ?? '')) ?>">
+            </div>
+            <div>
+                <label class="form-label">Ngày cấp thẻ</label>
+                <input type="date" name="NgayCapThe" class="form-control" value="<?= htmlspecialchars((string)($reader['NgayCapThe'] ?? '')) ?>" required>
+            </div>
+            <div>
+                <label class="form-label">Ngày hết hạn</label>
+                <input type="date" name="NgayHetHan" class="form-control" value="<?= htmlspecialchars((string)($reader['NgayHetHan'] ?? '')) ?>" required>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Trạng thái thẻ</label>
+                <select name="TrangThaiThe" class="form-select">
+                    <option value="Con han" <?= (isset($reader) && ($reader['TrangThaiThe'] ?? '') === 'Con han') ? 'selected' : '' ?>>✅ Con hạn</option>
+                    <option value="Het han" <?= (isset($reader) && ($reader['TrangThaiThe'] ?? '') === 'Het han') ? 'selected' : '' ?>>⚠️ Hết hạn</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary action-btn"><?= isset($reader) ? '💾 Cập nhật' : '💾 Lưu độc giả' ?></button>
+            <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=index" class="btn btn-secondary action-btn">↩️ Quay lại</a>
+        </div>
+    </form>
 </div>
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

@@ -1,31 +1,81 @@
-<?php $pageTitle = isset($reader) ? 'Sửa độc giả' : 'Thêm độc giả'; require __DIR__ . '/../layouts/header.php'; ?>
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <h2 class="mb-4"><?= isset($reader) ? 'Sửa độc giả' : 'Thêm độc giả' ?></h2>
+<?php
+$pageTitle = 'Quản lý độc giả';
+$breadcrumbs = [
+    ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+    ['label' => 'Độc giả', 'url' => null],
+];
+require __DIR__ . '/../layouts/header.php';
+?>
+<div class="page-header">
+    <h2>👥 Quản lý độc giả</h2>
+    <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=add" class="btn btn-primary action-btn">➕ Thêm mới</a>
+</div>
 
-        <form method="POST" action="<?= BASE_URL ?>/public/index.php?controller=docgia&action=<?= isset($reader) ? 'update&id=' . urlencode($reader['MaDocGia']) : 'store' ?>">
-            <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Họ tên</label><input type="text" name="HoTen" class="form-control" value="<?= htmlspecialchars((string)($reader['HoTen'] ?? '')) ?>" required></div>
-                <div class="col-md-6"><label class="form-label">Ngày sinh</label><input type="date" name="NgaySinh" class="form-control" value="<?= htmlspecialchars((string)($reader['NgaySinh'] ?? '')) ?>"></div>
-                <div class="col-md-6"><label class="form-label">Giới tính</label><input type="text" name="GioiTinh" class="form-control" value="<?= htmlspecialchars((string)($reader['GioiTinh'] ?? '')) ?>"></div>
-                <div class="col-md-6"><label class="form-label">Số điện thoại</label><input type="text" name="SoDienThoai" class="form-control" value="<?= htmlspecialchars((string)($reader['SoDienThoai'] ?? '')) ?>"></div>
-                <div class="col-md-6"><label class="form-label">Địa chỉ</label><input type="text" name="DiaChi" class="form-control" value="<?= htmlspecialchars((string)($reader['DiaChi'] ?? '')) ?>"></div>
-                <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="Email" class="form-control" value="<?= htmlspecialchars((string)($reader['Email'] ?? '')) ?>"></div>
-                <div class="col-md-6"><label class="form-label">Ngày cấp thẻ</label><input type="date" name="NgayCapThe" class="form-control" value="<?= htmlspecialchars((string)($reader['NgayCapThe'] ?? '')) ?>" required></div>
-                <div class="col-md-6"><label class="form-label">Ngày hết hạn</label><input type="date" name="NgayHetHan" class="form-control" value="<?= htmlspecialchars((string)($reader['NgayHetHan'] ?? '')) ?>" required></div>
-                <div class="col-md-12">
-                    <label class="form-label">Trạng thái thẻ</label>
-                    <select name="TrangThaiThe" class="form-select">
-                        <option value="Con han" <?= (isset($reader) && ($reader['TrangThaiThe'] ?? '') === 'Con han') ? 'selected' : '' ?>>Con hạn</option>
-                        <option value="Het han" <?= (isset($reader) && ($reader['TrangThaiThe'] ?? '') === 'Het han') ? 'selected' : '' ?>>Hết hạn</option>
-                    </select>
-                </div>
-            </div>
-            <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary"><?= isset($reader) ? 'Cập nhật' : 'Lưu' ?></button>
-                <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=index" class="btn btn-secondary">Quay lại</a>
-            </div>
-        </form>
+<div class="summary-grid">
+    <div class="summary-card info">
+        <div class="summary-icon">👥</div>
+        <div>
+            <div class="label">Tổng độc giả</div>
+            <div class="value"><?= count($readers ?? []) ?></div>
+        </div>
     </div>
+    <div class="summary-card success">
+        <div class="summary-icon">✅</div>
+        <div>
+            <div class="label">Thẻ còn hạn</div>
+            <div class="value"><?= count(array_filter($readers ?? [], fn($reader) => (($reader['TrangThaiThe'] ?? 'Con han') === 'Con han' || ($reader['TrangThaiThe'] ?? 'Con han') === 'Con hạn')) ) ?></div>
+        </div>
+    </div>
+    <div class="summary-card warning">
+        <div class="summary-icon">⏳</div>
+        <div>
+            <div class="label">Hết hạn</div>
+            <div class="value"><?= count(array_filter($readers ?? [], fn($reader) => ($reader['TrangThaiThe'] ?? 'Con han') === 'Het han')) ?></div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle shadow-sm bg-white">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã độc giả</th>
+                <th>Họ tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>SĐT</th>
+                <th>Ngày cấp thẻ</th>
+                <th>Ngày hết hạn</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($readers as $reader): ?>
+                <tr>
+                    <td><?= htmlspecialchars((string)$reader['MaDocGia']) ?></td>
+                    <td><?= htmlspecialchars((string)($reader['HoTen'] ?? '')) ?></td>
+                    <td><?= htmlspecialchars((string)($reader['NgaySinh'] ?? '')) ?></td>
+                    <td><?= htmlspecialchars((string)($reader['GioiTinh'] ?? '')) ?></td>
+                    <td><?= htmlspecialchars((string)($reader['SoDienThoai'] ?? '')) ?></td>
+                    <td><?= htmlspecialchars((string)($reader['NgayCapThe'] ?? '')) ?></td>
+                    <td><?= htmlspecialchars((string)($reader['NgayHetHan'] ?? '')) ?></td>
+                    <td>
+                        <?php
+                            $status = $reader['TrangThaiThe'] ?? 'Con han';
+                            $badgeClass = ($status === 'Het han' || $status === 'Hết hạn') ? 'bg-danger' : 'bg-success';
+                        ?>
+                        <span class="badge <?= $badgeClass ?>"><?= htmlspecialchars($status) ?></span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=edit&id=<?= (int)$reader['MaDocGia'] ?>" class="btn btn-sm btn-warning action-btn">✏️ Sửa</a>
+                            <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=delete&id=<?= (int)$reader['MaDocGia'] ?>" class="btn btn-sm btn-danger action-btn" onclick="return confirm('Bạn có chắc muốn xóa?');">🗑️ Xóa</a>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
 <?php require __DIR__ . '/../layouts/footer.php'; ?>
