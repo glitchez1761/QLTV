@@ -1,11 +1,11 @@
 <?php
 $currentController = $_GET['controller'] ?? 'home';
 $navItems = [
-    ['id' => 'home', 'label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
-    ['id' => 'sach', 'label' => 'Sách', 'url' => BASE_URL . '/public/index.php?controller=sach&action=index'],
-    ['id' => 'docgia', 'label' => 'Độc giả', 'url' => BASE_URL . '/public/index.php?controller=docgia&action=index'],
-    ['id' => 'loan', 'label' => 'Mượn trả', 'url' => BASE_URL . '/public/index.php?controller=loan&action=index'],
-    ['id' => 'admin', 'label' => 'Quản trị', 'url' => BASE_URL . '/public/index.php?controller=admin&action=dashboard'],
+    ['id' => 'home', 'label' => 'Trang chủ', 'icon' => '🏠', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+    ['id' => 'sach', 'label' => 'Sách', 'icon' => '📚', 'url' => BASE_URL . '/public/index.php?controller=sach&action=index'],
+    ['id' => 'docgia', 'label' => 'Độc giả', 'icon' => '👥', 'url' => BASE_URL . '/public/index.php?controller=docgia&action=index'],
+    ['id' => 'loan', 'label' => 'Mượn trả', 'icon' => '📦', 'url' => BASE_URL . '/public/index.php?controller=loan&action=index'],
+    ['id' => 'admin', 'label' => 'Quản trị', 'icon' => '⚙️', 'url' => BASE_URL . '/public/index.php?controller=admin&action=dashboard'],
 ];
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark">
@@ -18,7 +18,10 @@ $navItems = [
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <?php foreach ($navItems as $item): ?>
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentController === $item['id'] ? 'active' : '' ?>" href="<?= htmlspecialchars($item['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></a>
+                        <a class="nav-link <?= $currentController === $item['id'] ? 'active' : '' ?>" href="<?= htmlspecialchars($item['url'], ENT_QUOTES, 'UTF-8') ?>">
+                            <span class="me-1"><?= htmlspecialchars($item['icon'], ENT_QUOTES, 'UTF-8') ?></span>
+                            <?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?>
+                        </a>
                     </li>
                 <?php endforeach; ?>
             </ul>

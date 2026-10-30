@@ -13,6 +13,7 @@ $currentController = $_GET['controller'] ?? 'home';
     <style>
         :root {
             --primary: #2f6fed;
+            --primary-2: #4d7ef7;
             --primary-soft: #eaf1ff;
             --secondary: #1f2937;
             --muted: #6b7280;
@@ -22,9 +23,12 @@ $currentController = $_GET['controller'] ?? 'home';
             --success: #18a957;
             --warning: #f59e0b;
             --danger: #dc3545;
+            --purple: #7c5cff;
+            --teal: #13b5b1;
         }
 
         * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
             background: linear-gradient(180deg, #edf3ff 0%, #f5f7fb 18%, #f7f9fc 100%);
             color: var(--secondary);
@@ -32,7 +36,7 @@ $currentController = $_GET['controller'] ?? 'home';
         }
         a { text-decoration: none; }
         .navbar {
-            background: linear-gradient(90deg, #0d1b2a 0%, #102847 100%) !important;
+            background: linear-gradient(90deg, #0b1a2b 0%, #102847 100%) !important;
             border-bottom: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
         }
@@ -55,10 +59,10 @@ $currentController = $_GET['controller'] ?? 'home';
         .btn {
             border-radius: 10px;
             font-weight: 600;
-            padding: 0.6rem 1rem;
+            padding: 0.62rem 1rem;
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #4d7ef7);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
             border: none;
             box-shadow: 0 10px 24px rgba(47, 111, 237, 0.22);
         }
@@ -72,7 +76,7 @@ $currentController = $_GET['controller'] ?? 'home';
             border: 0;
         }
         .page-shell {
-            padding: 1.5rem 0 2rem;
+            padding: 1.5rem 0 2.25rem;
         }
         .card {
             border: 1px solid var(--border);
@@ -125,6 +129,32 @@ $currentController = $_GET['controller'] ?? 'home';
             padding: 0.45rem 0.8rem;
             font-weight: 700;
         }
+        .icon-inline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 10px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 1rem;
+            margin-right: 0.45rem;
+            vertical-align: middle;
+        }
+        .module-link .card-body {
+            position: relative;
+            overflow: hidden;
+        }
+        .module-link .card-body::after {
+            content: "";
+            position: absolute;
+            inset: auto -25% -28% auto;
+            width: 120px;
+            height: 120px;
+            background: rgba(47, 111, 237, 0.06);
+            border-radius: 50%;
+        }
         .admin-shell {
             display: flex;
             gap: 1.25rem;
@@ -137,6 +167,10 @@ $currentController = $_GET['controller'] ?? 'home';
             border-radius: 18px;
             box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
             padding: 1rem 0.75rem;
+            transition: width 0.25s ease, transform 0.25s ease;
+        }
+        .admin-sidebar.collapsed {
+            width: 90px;
         }
         .admin-sidebar .brand {
             color: #fff;
@@ -146,12 +180,21 @@ $currentController = $_GET['controller'] ?? 'home';
             letter-spacing: 0.04em;
         }
         .admin-sidebar .nav-link {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
             color: rgba(255,255,255,0.8) !important;
-            padding: 0.75rem 0.9rem;
+            padding: 0.8rem 0.9rem;
             border-radius: 12px;
             margin-bottom: 0.35rem;
             font-weight: 600;
+        }
+        .admin-sidebar .nav-link .label {
+            white-space: nowrap;
+        }
+        .admin-sidebar.collapsed .nav-link .label,
+        .admin-sidebar.collapsed .brand {
+            display: none;
         }
         .admin-sidebar .nav-link.active, .admin-sidebar .nav-link:hover {
             background: rgba(255,255,255,0.08);
@@ -183,9 +226,66 @@ $currentController = $_GET['controller'] ?? 'home';
             font-weight: 800;
             letter-spacing: -0.04em;
         }
+        .chart-card {
+            background: linear-gradient(180deg, #fff 0%, #f9fbff 100%);
+        }
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 0.75rem;
+            height: 180px;
+            padding-top: 1rem;
+        }
+        .chart-bar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: end;
+            gap: 0.75rem;
+            height: 100%;
+        }
+        .chart-bar {
+            width: 100%;
+            max-width: 48px;
+            border-radius: 12px 12px 0 0;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--purple) 100%);
+            min-height: 18px;
+            box-shadow: 0 10px 18px rgba(47, 111, 237, 0.16);
+        }
+        .chart-bar.alt {
+            background: linear-gradient(180deg, var(--teal) 0%, #52d2c1 100%);
+        }
+        .chart-label {
+            font-size: 0.74rem;
+            color: var(--muted);
+            font-weight: 700;
+        }
+        .mobile-sidebar-toggle {
+            display: none;
+        }
         @media (max-width: 991.98px) {
             .admin-shell { display: block; }
-            .admin-sidebar { width: 100%; margin-bottom: 1rem; }
+            .admin-sidebar {
+                width: 100%;
+                margin-bottom: 1rem;
+                display: none;
+            }
+            .admin-sidebar.show {
+                display: block;
+            }
+            .mobile-sidebar-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: var(--primary-soft);
+                color: var(--primary);
+                border: 1px solid rgba(47,111,237,0.15);
+                margin-right: 0.5rem;
+            }
             .page-header { flex-direction: column; align-items: flex-start; }
         }
     </style>

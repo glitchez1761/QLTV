@@ -4,22 +4,33 @@ $breadcrumbs = [
     ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
     ['label' => 'Quản trị', 'url' => null],
 ];
+$chartItems = [
+    ['label' => 'Độc giả', 'value' => (int)($stats['reader_count'] ?? 0), 'class' => 'primary'],
+    ['label' => 'Sách', 'value' => (int)($stats['book_count'] ?? 0), 'class' => 'alt'],
+    ['label' => 'Thẻ', 'value' => (int)($stats['active_card_count'] ?? 0), 'class' => 'primary'],
+    ['label' => 'Mượn', 'value' => (int)($stats['active_loan_count'] ?? 0), 'class' => 'alt'],
+];
+$maxChartValue = max(array_map(fn($item) => (int)($item['value'] ?? 0), $chartItems));
+$maxChartValue = $maxChartValue > 0 ? $maxChartValue : 1;
 require __DIR__ . '/../layouts/header.php';
 ?>
 <div class="admin-shell">
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar show">
         <a href="<?= BASE_URL ?>/public/index.php?controller=admin&action=dashboard" class="brand">QLTV Admin</a>
         <nav class="nav flex-column">
-            <a class="nav-link active" href="<?= BASE_URL ?>/public/index.php?controller=admin&action=dashboard">Dashboard</a>
-            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=admin&action=reports">Báo cáo</a>
-            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=sach&action=index">Quản lý sách</a>
-            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=index">Quản lý độc giả</a>
-            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=loan&action=index">Phiếu mượn</a>
+            <a class="nav-link active" href="<?= BASE_URL ?>/public/index.php?controller=admin&action=dashboard"><span class="icon-inline">📊</span><span class="label">Dashboard</span></a>
+            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=admin&action=reports"><span class="icon-inline">📈</span><span class="label">Báo cáo</span></a>
+            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=sach&action=index"><span class="icon-inline">📚</span><span class="label">Quản lý sách</span></a>
+            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=index"><span class="icon-inline">👥</span><span class="label">Quản lý độc giả</span></a>
+            <a class="nav-link" href="<?= BASE_URL ?>/public/index.php?controller=loan&action=index"><span class="icon-inline">📦</span><span class="label">Phiếu mượn</span></a>
         </nav>
     </aside>
     <div class="admin-content">
         <div class="page-header">
-            <h2>Dashboard quản trị</h2>
+            <div class="d-flex align-items-center">
+                <button class="mobile-sidebar-toggle" type="button" aria-label="Toggle sidebar">☰</button>
+                <h2>Dashboard quản trị</h2>
+            </div>
             <a href="<?= BASE_URL ?>/public/index.php?controller=admin&action=reports" class="btn btn-outline-primary">Xem báo cáo</a>
         </div>
 
@@ -30,10 +41,32 @@ require __DIR__ . '/../layouts/header.php';
             <div class="col-md-3"><div class="stats-card"><div class="card-body"><div class="stats-label">Phiếu đang mượn</div><div class="stats-value"><?= (int)($stats['active_loan_count'] ?? 0) ?></div></div></div></div>
         </div>
 
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body">
-                <h5 class="mb-3">Tổng quan</h5>
-                <div class="alert alert-warning mb-0">Có <strong><?= (int)($stats['overdue_loan_count'] ?? 0) ?></strong> tài liệu đang quá hạn cần xử lý.</div>
+        <div class="row g-3 mb-4">
+            <div class="col-lg-8">
+                <div class="card chart-card shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Biểu đồ hoạt động</h5>
+                            <span class="badge text-bg-primary-subtle text-primary">Thống kê nhanh</span>
+                        </div>
+                        <div class="chart-bars">
+                            <?php foreach ($chartItems as $chart): ?>
+                                <div class="chart-bar-wrap">
+                                    <div class="chart-bar <?= ($chart['class'] ?? '') === 'alt' ? 'alt' : '' ?>" style="height: <?= max(18, ((int)$chart['value'] / $maxChartValue) * 100) ?>%;"></div>
+                                    <div class="chart-label"><?= htmlspecialchars($chart['label'], ENT_QUOTES, 'UTF-8') ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3">Tổng quan</h5>
+                        <div class="alert alert-warning mb-0">Có <strong><?= (int)($stats['overdue_loan_count'] ?? 0) ?></strong> tài liệu đang quá hạn cần xử lý.</div>
+                    </div>
+                </div>
             </div>
         </div>
 
