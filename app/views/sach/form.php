@@ -1,34 +1,32 @@
-<?php $pageTitle = 'Quản lý sách'; require __DIR__ . '/../layouts/header.php'; ?>
-<div class="page-header">
-    <h2>Quản lý sách</h2>
-    <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=add" class="btn btn-primary">+ Thêm sách</a>
+<?php
+$pageTitle = 'Đăng nhập';
+$breadcrumbs = [
+    ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+    ['label' => 'Đăng nhập', 'url' => null],
+];
+require __DIR__ . '/../layouts/header.php';
+?>
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 140px);">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-lg-5">
+                <h3 class="text-center mb-4 fw-bold">Đăng nhập</h3>
+                <?php if (!empty($errorMessage)): ?>
+                    <div class="alert alert-danger"><?= htmlspecialchars($errorMessage) ?></div>
+                <?php endif; ?>
+                <form method="POST" action="<?= BASE_URL ?>/public/index.php?controller=auth&action=authenticate">
+                    <div class="mb-3">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
-<table class="table table-bordered table-striped shadow-sm bg-white">
-    <thead class="table-dark">
-        <tr>
-            <th>Mã sách</th>
-            <th>Tên sách</th>
-            <th>Tác giả</th>
-            <th>Nhà xuất bản</th>
-            <th>Số lượng tồn</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($books as $book): ?>
-            <tr>
-                <td><?= htmlspecialchars($book['MaSach']) ?></td>
-                <td><?= htmlspecialchars($book['TenSach']) ?></td>
-                <td><?= htmlspecialchars($book['TacGia']) ?></td>
-                <td><?= htmlspecialchars($book['NhaXuatBan']) ?></td>
-                <td><?= htmlspecialchars($book['SoLuongTon']) ?></td>
-                <td>
-                    <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=edit&id=<?= urlencode($book['MaSach']) ?>" class="btn btn-warning btn-sm">Sửa</a>
-                    <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=delete&id=<?= urlencode($book['MaSach']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

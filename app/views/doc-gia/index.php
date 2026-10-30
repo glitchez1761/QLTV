@@ -1,35 +1,41 @@
-<?php $pageTitle = isset($book) ? 'Sửa sách' : 'Thêm sách'; require __DIR__ . '/../layouts/header.php'; ?>
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <h2 class="mb-4"><?= isset($book) ? 'Sửa sách' : 'Thêm sách' ?></h2>
-        <form method="POST" action="<?= BASE_URL ?>/public/index.php?controller=sach&action=<?= isset($book) ? 'update&id=' . urlencode($book['MaSach']) : 'store' ?>">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Mã sách</label>
-                    <input type="text" name="MaSach" class="form-control" value="<?= htmlspecialchars($book['MaSach'] ?? '') ?>" <?= isset($book) ? 'readonly' : 'required' ?>>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Tên sách</label>
-                    <input type="text" name="TenSach" class="form-control" value="<?= htmlspecialchars($book['TenSach'] ?? '') ?>" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Tác giả</label>
-                    <input type="text" name="TacGia" class="form-control" value="<?= htmlspecialchars($book['TacGia'] ?? '') ?>" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Nhà xuất bản</label>
-                    <input type="text" name="NhaXuatBan" class="form-control" value="<?= htmlspecialchars($book['NhaXuatBan'] ?? '') ?>" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Số lượng tồn</label>
-                    <input type="number" name="SoLuongTon" class="form-control" value="<?= htmlspecialchars($book['SoLuongTon'] ?? 0) ?>" required>
-                </div>
-            </div>
-            <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary"><?= isset($book) ? 'Cập nhật' : 'Lưu' ?></button>
-                <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=index" class="btn btn-secondary">Quay lại</a>
-            </div>
-        </form>
-    </div>
+<?php
+$pageTitle = 'Quản lý sách';
+$breadcrumbs = [
+    ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+    ['label' => 'Sách', 'url' => null],
+];
+require __DIR__ . '/../layouts/header.php';
+?>
+<div class="page-header">
+    <h2>Quản lý sách</h2>
+    <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=add" class="btn btn-primary">+ Thêm sách</a>
 </div>
+
+<table class="table table-bordered table-striped shadow-sm bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã sách</th>
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Nhà xuất bản</th>
+            <th>Số lượng tồn</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($books as $book): ?>
+            <tr>
+                <td><?= htmlspecialchars($book['MaSach']) ?></td>
+                <td><?= htmlspecialchars($book['TenSach']) ?></td>
+                <td><?= htmlspecialchars($book['TacGia']) ?></td>
+                <td><?= htmlspecialchars($book['NhaXuatBan']) ?></td>
+                <td><?= htmlspecialchars($book['SoLuongTon']) ?></td>
+                <td>
+                    <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=edit&id=<?= urlencode($book['MaSach']) ?>" class="btn btn-warning btn-sm">Sửa</a>
+                    <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=delete&id=<?= urlencode($book['MaSach']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

@@ -1,87 +1,63 @@
-<?php $pageTitle = 'Lập phiếu mượn'; require __DIR__ . '/../layouts/header.php'; ?>
-<div class="row">
-    <div class="col-lg-7">
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white py-3">
-                <h5 class="card-title mb-0 text-primary fw-bold">Lập Phiếu Mượn Tài Liệu</h5>
-            </div>
-            <div class="card-body p-4">
-                <form action="<?= BASE_URL ?>/public/index.php?controller=loan&action=store" method="POST" id="loanForm">
-                    <div class="mb-3">
-                        <label for="card_code" class="form-label fw-bold">Mã thẻ độc giả <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="card_code" name="card_code" placeholder="Ví dụ: THE2026001" required autofocus>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold d-flex justify-content-between align-items-center">
-                            <span>Danh sách mã cuốn sách <span class="text-danger">*</span></span>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddBookRow">+ Thêm sách</button>
-                        </label>
-                        <div id="bookInputsContainer">
-                            <div class="input-group mb-2 book-input-row">
-                                <span class="input-group-text bg-light text-muted">#1</span>
-                                <input type="text" class="form-control book-code-input" name="copy_codes[]" placeholder="Nhập mã tài liệu (VD: CS-00012)" required>
-                                <button type="button" class="btn btn-outline-danger btn-remove-row" style="display: none;">Xóa</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6"><label class="form-label text-muted">Ngày mượn</label><input type="text" class="form-control bg-light" value="<?= date('d/m/Y') ?>" readonly></div>
-                        <div class="col-md-6"><label class="form-label text-muted">Hạn trả dự kiến</label><input type="text" class="form-control bg-light" value="<?= date('d/m/Y', strtotime('+30 days')) ?>" readonly></div>
-                    </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <button type="reset" class="btn btn-light px-4">Đặt lại</button>
-                        <button type="submit" class="btn btn-primary px-4 fw-bold">Xác nhận & lưu</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+<?php
+$pageTitle = 'Phiếu mượn';
+$breadcrumbs = [
+    ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+    ['label' => 'Mượn trả', 'url' => null],
+];
+require __DIR__ . '/../layouts/header.php';
+?>
+<div class="page-header">
+    <div>
+        <h2>Phiếu mượn đang mở</h2>
+        <small class="text-secondary">Tra cứu các tài liệu chưa được trả.</small>
     </div>
-
-    <div class="col-lg-5">
-        <div class="card shadow-sm border-0 mb-4 border-start border-primary border-4">
-            <div class="card-body">
-                <h6 class="fw-bold text-dark mb-3">Quy định mượn tài liệu về nhà</h6>
-                <ul class="list-unstyled text-muted small mb-0">
-                    <li class="mb-2">• Thời hạn giữ sách tối đa: <strong>30 ngày / lần mượn</strong>.</li>
-                    <li class="mb-2">• Sách mượn phải ở trạng thái <code>Còn trong kho</code>.</li>
-                    <li class="mb-2">• Độc giả phải có gói dịch vụ còn hiệu lực.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <a href="<?= BASE_URL ?>/public/index.php?controller=loan&action=create" class="btn btn-primary">+ Lập phiếu mượn</a>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const container = document.getElementById('bookInputsContainer');
-    const btnAdd = document.getElementById('btnAddBookRow');
-    function updateRemoveButtons() {
-        const rows = container.querySelectorAll('.book-input-row');
-        rows.forEach((row, index) => {
-            row.querySelector('.input-group-text').textContent = '#' + (index + 1);
-            const removeBtn = row.querySelector('.btn-remove-row');
-            removeBtn.style.display = rows.length > 1 ? 'block' : 'none';
-        });
-    }
-    btnAdd.addEventListener('click', function () {
-        const rows = container.querySelectorAll('.book-input-row');
-        if (rows.length >= 5) {
-            alert('Một phiếu mượn tối đa chỉ chứa 5 cuốn sách.');
-            return;
-        }
-        const newRow = rows[0].cloneNode(true);
-        newRow.querySelector('input').value = '';
-        container.appendChild(newRow);
-        updateRemoveButtons();
-    });
-    container.addEventListener('click', function (e) {
-        if (e.target.classList.contains('btn-remove-row')) {
-            e.target.closest('.book-input-row').remove();
-            updateRemoveButtons();
-        }
-    });
-});
-</script>
+<form class="row g-2 mb-3" method="get" action="<?= BASE_URL ?>/public/index.php?controller=loan&action=index">
+    <div class="col-sm-9">
+        <input id="loan-keyword" name="keyword" value="<?= htmlspecialchars((string)($_GET['keyword'] ?? '')) ?>" class="form-control" placeholder="Tìm theo độc giả, mã thẻ hoặc sách">
+    </div>
+    <div class="col-sm-3 d-grid">
+        <button class="btn btn-outline-primary">Tìm phiếu mượn</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm bg-white">
+        <thead class="table-dark">
+            <tr>
+                <th>Phiếu mượn</th>
+                <th>Độc giả / thẻ</th>
+                <th>Tài liệu</th>
+                <th>Hạn trả</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach (($loans ?? []) as $loan): ?>
+                <tr>
+                    <td><?= htmlspecialchars((string)($loan['ma_phieu_muon'] ?? '')) ?></td>
+                    <td><?= htmlspecialchars((string)($loan['ho_ten'] ?? '')) ?><br><small><?= htmlspecialchars((string)($loan['ma_the'] ?? '')) ?></small></td>
+                    <td><?= htmlspecialchars((string)($loan['ten_sach'] ?? '')) ?><br><small><?= htmlspecialchars((string)($loan['ma_tai_lieu'] ?? '')) ?></small></td>
+                    <td><?= htmlspecialchars((string)($loan['han_tra'] ?? '')) ?></td>
+                    <td>
+                        <span class="badge text-bg-<?= ($loan['han_tra'] ?? '') < date('Y-m-d') ? 'danger' : 'success' ?>">
+                            <?= (($loan['han_tra'] ?? '') < date('Y-m-d')) ? 'Quá hạn' : 'Đang mượn' ?>
+                        </span>
+                    </td>
+                    <td>
+                        <?php if (((int)($loan['so_lan_gia_han'] ?? 0)) < 1 && (($loan['han_tra'] ?? '') >= date('Y-m-d')): ?>
+                            <a href="<?= BASE_URL ?>/public/index.php?controller=loan&action=renew&id=<?= (int)($loan['loan_detail_id'] ?? 0) ?>" class="btn btn-sm btn-outline-primary" onclick="return confirm('Gia hạn tài liệu này?');">Gia hạn</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            <?php if (empty($loans)): ?>
+                <tr><td colspan="6" class="text-center text-secondary py-4">Không có phiếu mượn phù hợp.</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

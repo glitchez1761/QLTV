@@ -1,4 +1,10 @@
-<?php $pageTitle = 'Trang chủ'; require __DIR__ . '/../layouts/header.php'; ?>
+<?php
+$pageTitle = 'Trang chủ';
+$breadcrumbs = [
+    ['label' => 'Trang chủ', 'url' => BASE_URL . '/public/index.php?controller=home&action=index'],
+];
+require __DIR__ . '/../layouts/header.php';
+?>
 <div class="row g-3">
     <div class="col-md-4">
         <div class="card h-100">
