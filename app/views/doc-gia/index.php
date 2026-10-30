@@ -1,53 +1,35 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý độc giả</title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/library_MVC/public/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Quản lý độc giả</h2>
-            <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=add" class="btn btn-primary">+ Thêm mới</a>
-        </div>
-
-        <table class="table table-bordered table-striped align-middle shadow-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th>Mã độc giả</th>
-                    <th>Họ tên</th>
-                    <th>Ngày sinh</th>
-                    <th>Giới tính</th>
-                    <th>SĐT</th>
-                    <th>Ngày cấp thẻ</th>
-                    <th>Ngày hết hạn</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($readers as $reader): ?>
-                    <tr>
-                        <td><?= htmlspecialchars((string)$reader['MaDocGia']) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['HoTen'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['NgaySinh'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['GioiTinh'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['SoDienThoai'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['NgayCapThe'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['NgayHetHan'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($reader['TrangThaiThe'] ?? 'Con han')) ?></td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=edit&id=<?= (int)$reader['MaDocGia'] ?>" class="btn btn-sm btn-warning">Sửa</a>
-                                <a href="<?= BASE_URL ?>/public/index.php?controller=docgia&action=delete&id=<?= (int)$reader['MaDocGia'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+<?php $pageTitle = isset($book) ? 'Sửa sách' : 'Thêm sách'; require __DIR__ . '/../layouts/header.php'; ?>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <h2 class="mb-4"><?= isset($book) ? 'Sửa sách' : 'Thêm sách' ?></h2>
+        <form method="POST" action="<?= BASE_URL ?>/public/index.php?controller=sach&action=<?= isset($book) ? 'update&id=' . urlencode($book['MaSach']) : 'store' ?>">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã sách</label>
+                    <input type="text" name="MaSach" class="form-control" value="<?= htmlspecialchars($book['MaSach'] ?? '') ?>" <?= isset($book) ? 'readonly' : 'required' ?>>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tên sách</label>
+                    <input type="text" name="TenSach" class="form-control" value="<?= htmlspecialchars($book['TenSach'] ?? '') ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tác giả</label>
+                    <input type="text" name="TacGia" class="form-control" value="<?= htmlspecialchars($book['TacGia'] ?? '') ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nhà xuất bản</label>
+                    <input type="text" name="NhaXuatBan" class="form-control" value="<?= htmlspecialchars($book['NhaXuatBan'] ?? '') ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Số lượng tồn</label>
+                    <input type="number" name="SoLuongTon" class="form-control" value="<?= htmlspecialchars($book['SoLuongTon'] ?? 0) ?>" required>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><?= isset($book) ? 'Cập nhật' : 'Lưu' ?></button>
+                <a href="<?= BASE_URL ?>/public/index.php?controller=sach&action=index" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
     </div>
-</body>
-</html>
+</div>
+<?php require __DIR__ . '/../layouts/footer.php'; ?>
